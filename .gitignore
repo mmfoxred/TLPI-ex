@@ -1,3 +1,5 @@
 build/
 file/build/
 tlpi-dist/
+
+*.txt
