@@ -40,9 +40,35 @@ void _tlpi_lib()
     // usageErr("test usageErr\n");
 }
 
+//测试getopt()
+void _getopt(int argc,const char* argv[])
+{
+    int o;
+    const char* optstring = "abc:";
+    while((o = getopt(argc, argv, optstring)) != -1)
+    {
+        switch (o) {
+        case 'a':
+            printf("opt is a,optarg is %s\n",optarg);
+            break;
+        case'b':
+            printf("opt is b,optarg is %s\n",optarg);
+            break;
+        case 'c':
+            printf("opt is c,optarg is %s\n",optarg);
+            break;
+        case '?':
+            printf("opterr:%d\n",opterr);
+            printf("optopt: %c\n",optopt);
+            break;
+        default:
+            printf("default\n");
+        }
+    }
+}
 
 int main(int argc, const char* argv[])
 {
-    _tlpi_lib();
+    _getopt(argc, argv);
     return 0;
 }
