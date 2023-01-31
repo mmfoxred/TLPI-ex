@@ -1,9 +1,11 @@
 #include <asm-generic/errno-base.h>
 #include <errno.h>
+#include <error_functions.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include "tlpi_hdr.h"
 
 //测试使用两个错误输出函数
 void _error(int argc, const char* argv[])
@@ -31,9 +33,16 @@ void _read_in_term()
     printf("input: %s\n",buffer);
 }
 
+//测试tlpi_hdr库
+void _tlpi_lib()
+{
+    errMsg("test this lib \n%s","hello world\n");
+    // usageErr("test usageErr\n");
+}
+
 
 int main(int argc, const char* argv[])
 {
-    _read_in_term();
+    _tlpi_lib();
     return 0;
 }
