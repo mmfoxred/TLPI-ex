@@ -71,26 +71,50 @@ void _getopt(int argc, const char* argv[])
 //测试获取文件状态标志
 void _get_file_flags()
 {
-    int    flags = O_WRONLY | O_APPEND;
-    mode_t mode = S_IWUSR | S_IWGRP | S_IWOTH | S_IRUSR | S_IROTH | S_IRGRP;
-    int    fd   = open("hello.txt", flags, mode);
-    int flags_get = fcntl(fd, F_GETFL);
-    if(flags_get == -1)
-        errExit("fcntl");
-    if(flags_get & O_APPEND)
-        printf("O_APPEND\n");
+    int    flags     = O_WRONLY | O_APPEND;
+    mode_t mode      = S_IWUSR | S_IWGRP | S_IWOTH | S_IRUSR | S_IROTH | S_IRGRP;
+    int    fd        = open("hello.txt", flags, mode);
+    int    flags_get = fcntl(fd, F_GETFL);
+    if (flags_get == -1) errExit("fcntl");
+    if (flags_get & O_APPEND) printf("O_APPEND\n");
 
     int accessMode = flags_get & O_ACCMODE;
-    if(accessMode == O_WRONLY)
+    if (accessMode == O_WRONLY)
         printf("O_WRONLY\n");
-    else if(accessMode == O_RDONLY)
+    else if (accessMode == O_RDONLY)
         printf("O_RDONLY\n");
-    else if(accessMode == O_RDWR)
+    else if (accessMode == O_RDWR)
         printf("O_RDWR\n");
+}
+
+//测试dup dup2 fcntl
+void _dup()
+{
+    int flags = O_RDWR ;
+    int fd    = open("hello.txt", flags);
+    if (fd == -1) errExit("open");
+    printf("fd= %d\n",fd);
+    //使用dup
+    if (close(STDOUT_FILENO) == -1) errExit("close");
+    int newfd_dup = dup(fd);
+    printf("use dup redirect\n");
+    printf("fd = %d\n",newfd_dup);
+    //使用dup2
+    //去除上面dup的重定向,此时newfd_dup是1
+    if (close(STDOUT_FILENO) == -1)
+        errExit("close_dup2");
+    dup2(fd, STDOUT_FILENO);
+    printf("use dup2 redirect\n");
+    //使用fcntl,它也需要先close
+    if (close(STDOUT_FILENO) == -1)   //去除上面dup的重定向
+        errExit("close_fcn");
+    int newfd_fcn = fcntl(fd, F_DUPFD, 1);
+    printf("use fcntl redirect\n");
+    close(newfd_fcn);
 }
 
 int main(int argc, const char* argv[])
 {
-    _get_file_flags();
+    _dup();
     return 0;
 }
